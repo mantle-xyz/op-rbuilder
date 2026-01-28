@@ -68,7 +68,7 @@ fn convert_receipt(receipt: &OpReceipt) -> op_alloy_consensus::OpReceipt {
             op_alloy_consensus::OpReceipt::Deposit(op_alloy_consensus::OpDepositReceipt {
                 inner: r.inner.clone(),
                 deposit_nonce: r.deposit_nonce,
-                deposit_receipt_version: r.deposit_receipt_version,
+                deposit_receipt_version: None,
             })
         }
     }
@@ -535,7 +535,7 @@ where
                 // Otherwise, wait for first_flashblock_offset before first build.
                 if !build_at_interval_end && tx.send(fb_cancel.clone()).await.is_err() {
                     error!(
-                        target: "payload_builder", 
+                        target: "payload_builder",
                     "Did not trigger first flashblock build due to payload building error or block building being cancelled");
                     return;
                 }

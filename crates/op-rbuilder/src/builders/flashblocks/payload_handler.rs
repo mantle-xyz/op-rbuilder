@@ -301,6 +301,8 @@ fn execute_transactions(
         let executable_tx = match tx {
             OpTxEnvelope::Deposit(ref tx) => {
                 let deposit = DepositTransactionParts {
+                    eth_tx_value: tx.eth_tx_value,
+                    eth_value: Some(tx.eth_value),
                     mint: Some(tx.mint),
                     source_hash: tx.source_hash,
                     is_system_transaction: tx.is_system_transaction,
@@ -430,7 +432,7 @@ fn build_receipt<E: alloy_evm::Evm>(
                 // when set. The state transition process ensures
                 // this is only set for post-Canyon deposit
                 // transactions.
-                deposit_receipt_version: is_canyon_active.then_some(1),
+                deposit_receipt_version: None,
             })
         }
     }

@@ -93,7 +93,7 @@ reth-tracing-otlp = { git = "https://github.com/paradigmxyz/reth", tag = "v1.9.3
 reth-ipc = { git = "https://github.com/paradigmxyz/reth", tag = "v1.9.3" }
 
 # reth optimism
-reth-optimism-primitives = { git = "https://github.com/paradigmxyz/reth", tag = "v1.9.3" }
+reth-optimism-primitives = { git = "https://github.com/paradigmxyz/reth", tag = "v1.9.3", features = ["serde", "reth-codec"] }
 reth-optimism-consensus = { git = "https://github.com/paradigmxyz/reth", tag = "v1.9.3" }
 reth-optimism-cli = { git = "https://github.com/paradigmxyz/reth", tag = "v1.9.3" }
 reth-optimism-forks = { git = "https://github.com/paradigmxyz/reth", tag = "v1.9.3" }
@@ -106,22 +106,18 @@ reth-optimism-rpc = { git = "https://github.com/paradigmxyz/reth", tag = "v1.9.3
     "client",
 ] }
 
-revm = { version = "31.0.2", features = [
-    "std",
-    "secp256k1",
-    "optional_balance_check",
-], default-features = false }
-revm-inspectors = { version = "0.32.0", default-features = false }
-op-revm = { version = "12.0.2", default-features = false }
-revm-bytecode = { version = "7.1.1", default-features = false }
-revm-database = { version = "9.0.5", default-features = false }
-revm-state = { version = "8.1.1", default-features = false }
-revm-primitives = { version = "21.0.2", default-features = false }
-revm-interpreter = { version = "29.0.1", default-features = false }
-revm-inspector = { version = "12.0.0", default-features = false }
-revm-context = { version = "11.0.2", default-features = false }
-revm-context-interface = { version = "12.0.1", default-features = false }
-revm-database-interface = { version = "8.0.5", default-features = false }
+revm = { git = "https://github.com/mantle-xyz/revm", tag = "v2.2.0-beta", default-features = false }
+revm-inspectors = { git = "https://github.com/mantle-xyz/revm-inspectors", tag = "v2.2.0-beta", default-features = false }
+op-revm = { git = "https://github.com/mantle-xyz/revm", tag = "v2.2.0-beta", default-features = false }
+revm-bytecode = { git = "https://github.com/mantle-xyz/revm", tag = "v2.2.0-beta", default-features = false }
+revm-database = { git = "https://github.com/mantle-xyz/revm", tag = "v2.2.0-beta", default-features = false }
+revm-state = { git = "https://github.com/mantle-xyz/revm", tag = "v2.2.0-beta", default-features = false }
+revm-primitives = { git = "https://github.com/mantle-xyz/revm", tag = "v2.2.0-beta", default-features = false }
+revm-interpreter = { git = "https://github.com/mantle-xyz/revm", tag = "v2.2.0-beta", default-features = false }
+revm-inspector = { git = "https://github.com/mantle-xyz/revm", tag = "v2.2.0-beta", default-features = false }
+revm-context = { git = "https://github.com/mantle-xyz/revm", tag = "v2.2.0-beta", default-features = false }
+revm-context-interface = { git = "https://github.com/mantle-xyz/revm", tag = "v2.2.0-beta", default-features = false }
+revm-database-interface = { git = "https://github.com/mantle-xyz/revm", tag = "v2.2.0-beta", default-features = false }
 
 ethereum_ssz_derive = "0.9.0"
 ethereum_ssz = "0.9.0"
@@ -129,84 +125,151 @@ ethereum_ssz = "0.9.0"
 alloy-primitives = { version = "1.4.1", default-features = false, features = [
     "map-foldhash",
 ] }
-alloy-rlp = "0.3.10"
-alloy-chains = "0.2.5"
-alloy-contract = { version = "1.0.41" }
-alloy-evm = { version = "0.23.0", default-features = false }
-alloy-provider = { version = "1.0.41", features = [
-    "ipc",
-    "pubsub",
-    "txpool-api",
-    "engine-api",
+alloy-rlp = { version = "0.3.10", default-features = false, features = [
+    "core-net",
 ] }
-alloy-pubsub = { version = "1.0.41" }
-alloy-eips = { version = "1.0.41" }
-alloy-rpc-types = { version = "1.0.41" }
-alloy-json-rpc = { version = "1.0.41" }
-alloy-transport-http = { version = "1.0.41" }
-alloy-network = { version = "1.0.41" }
-alloy-network-primitives = { version = "1.0.41" }
+alloy-chains = { version = "0.2.5", default-features = false }
+alloy-contract = { version = "1.0.41", default-features = false }
+alloy-evm = { git = "https://github.com/mantle-xyz/evm", tag = "v2.2.0-beta", default-features = false }
+alloy-provider = { version = "1.0.41", features = [
+    "reqwest",
+], default-features = false }
+alloy-pubsub = { version = "1.0.41", default-features = false }
+alloy-eips = { version = "1.0.41", default-features = false }
+alloy-rpc-types = { version = "1.0.41", features = [
+    "eth",
+], default-features = false }
+alloy-json-rpc = { version = "1.0.41", default-features = false }
+alloy-transport-http = { version = "1.0.41", features = [
+    "reqwest-rustls-tls",
+], default-features = false }
+alloy-network = { version = "1.0.41", default-features = false }
+alloy-network-primitives = { version = "1.0.41", default-features = false }
 alloy-transport = { version = "1.0.41" }
 alloy-node-bindings = { version = "1.0.41" }
-alloy-consensus = { version = "1.0.41", features = ["kzg"] }
-alloy-serde = { version = "1.0.41" }
+alloy-consensus = { version = "1.0.41", default-features = false }
+alloy-serde = { version = "1.0.41", default-features = false }
 alloy-sol-types = { version = "1.2.1", features = ["json"] }
-alloy-rpc-types-beacon = { version = "1.0.41", features = ["ssz"] }
-alloy-rpc-types-engine = { version = "1.0.41", features = ["ssz"] }
-alloy-rpc-types-eth = { version = "1.0.41" }
-alloy-signer-local = { version = "1.0.41" }
-alloy-rpc-client = { version = "1.0.41" }
-alloy-genesis = { version = "1.0.41" }
-alloy-trie = { version = "0.9.1" }
+alloy-rpc-types-beacon = { version = "1.0.41", default-features = false }
+alloy-rpc-types-engine = { version = "1.0.41", default-features = false }
+alloy-rpc-types-eth = { version = "1.0.41", default-features = false }
+alloy-signer-local = { version = "1.0.41", default-features = false }
+alloy-rpc-client = { version = "1.0.41", default-features = false }
+alloy-genesis = { version = "1.0.41", default-features = false }
+alloy-trie = { version = "0.9.1", default-features = false }
 
 alloy-hardforks = "0.4.4"
 
 # optimism
-alloy-op-evm = { version = "0.23.0", default-features = false }
+alloy-op-evm = { git = "https://github.com/mantle-xyz/evm", tag = "v2.2.0-beta", default-features = false }
 alloy-op-hardforks = "0.4.4"
-op-alloy-rpc-types = { version = "0.22.4", default-features = false }
-op-alloy-rpc-types-engine = { version = "0.22.4", default-features = false }
-op-alloy-rpc-jsonrpsee = { version = "0.22.4", default-features = false }
-op-alloy-network = { version = "0.22.4", default-features = false }
-op-alloy-consensus = { version = "0.22.4", default-features = false }
+op-alloy-rpc-types = { git = "https://github.com/mantle-xyz/op-alloy", tag = "v2.1.0", default-features = false }
+op-alloy-rpc-types-engine = { git = "https://github.com/mantle-xyz/op-alloy", tag = "v2.1.0", default-features = false }
+op-alloy-rpc-jsonrpsee = { git = "https://github.com/mantle-xyz/op-alloy", tag = "v2.1.0", default-features = false }
+op-alloy-network = { git = "https://github.com/mantle-xyz/op-alloy", tag = "v2.1.0", default-features = false }
+op-alloy-consensus = { git = "https://github.com/mantle-xyz/op-alloy", tag = "v2.1.0", default-features = false }
 op-alloy-flz = { version = "0.13.1", default-features = false }
 
 async-trait = { version = "0.1.83" }
 clap = { version = "4.4.3", features = ["derive", "env", "string"] }
 clap_builder = { version = "4.5.19" }
-thiserror = { version = "1.0.64" }
-eyre = { version = "0.6.12" }
-jsonrpsee = { version = "0.26.0" }
-jsonrpsee-types = { version = "0.26.0" }
-jsonrpsee-core = { version = "0.26.0" }
-parking_lot = { version = "0.12.3" }
+thiserror = { version = "2.0.0", default-features = false }
+eyre = "0.6"
+jsonrpsee = "0.26.0"
+jsonrpsee-types = "0.26.0"
+jsonrpsee-core = "0.26.0"
+parking_lot = "0.12"
 tokio = { version = "1.44.2", default-features = false }
-auto_impl = { version = "1.2.0" }
-reqwest = { version = "0.12.8" }
-serde = { version = "1.0.210" }
-serde_json = { version = "1.0.128" }
-serde_with = { version = "3.8.1" }
-secp256k1 = { version = "0.30" }
-derive_more = { version = "2" }
+auto_impl = "1"
+reqwest = { version = "0.12", default-features = false }
+serde = { version = "^1.0.226", default-features = false }
+serde_json = { version = "1.0", default-features = false, features = [
+    "alloc",
+] }
+serde_with = { version = "3", default-features = false, features = [
+    "macros",
+] }
+secp256k1 = { version = "0.30", default-features = false, features = [
+    "global-context",
+    "recovery",
+] }
+derive_more = { version = "2", default-features = false, features = [
+    "full",
+] }
 either = { version = "1.15.0", default-features = false }
 tokio-stream = "0.1.11"
 tokio-util = { version = "0.7.4", features = ["codec"] }
-url = "2.5.2"
+url = { version = "2.3", default-features = false }
 warp = "0.3.7"
 flate2 = "1.0.37"
 prometheus = "0.13.4"
 ctor = "0.2"
-dashmap = "6.1"
+dashmap = "6.0"
 hex = "0.4"
 futures = "0.3"
-futures-util = "0.3.31"
+futures-util = { version = "0.3", default-features = false }
 
 lazy_static = "1.4.0"
-tikv-jemallocator = { version = "0.6" }
-tracing = "0.1.37"
-metrics = { version = "0.24.1" }
-ahash = "0.8.6"
+tikv-jemallocator = "0.6"
+tracing = { version = "0.1.0", default-features = false }
+metrics = "0.24.0"
+ahash = "0.8"
 time = { version = "0.3.36", features = ["macros", "formatting", "parsing"] }
-vergen = "9.0.4"
-vergen-git2 = "1.0.5"
-opentelemetry = { version = "0.31", features = ["trace"] }
+vergen = "=9.0.6"
+vergen-lib = "=0.1.6"
+vergen-git2 = "=1.0.7"
+opentelemetry = "0.31"
+
+[patch."https://github.com/paradigmxyz/reth"]
+reth = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-basic-payload-builder = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-chain-state = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-chainspec = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-cli = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-cli-commands = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-cli-util = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-db = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-db-common = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-errors = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-evm = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-evm-ethereum = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-execution-errors = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-execution-types = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-exex = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-ipc = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-metrics = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-network-peers = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-node-api = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-node-builder = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-node-core = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-node-ethereum = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-optimism-chainspec = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-optimism-cli = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-optimism-consensus = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-optimism-evm = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-optimism-forks = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-optimism-node = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-optimism-payload-builder = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-optimism-primitives = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-optimism-rpc = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-optimism-txpool = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-payload-builder = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-payload-builder-primitives = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-payload-primitives = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-payload-util = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-primitives = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-primitives-traits = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-provider = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-revm = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-rpc-api = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-rpc-engine-api = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-rpc-eth-types = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-rpc-layer = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-storage-api = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-tasks = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-testing-utils = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-tracing-otlp = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-transaction-pool = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-trie = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-trie-db = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }
+reth-trie-parallel = { git = "https://github.com/mantle-xyz/reth", branch = "flashblocks/poc" }

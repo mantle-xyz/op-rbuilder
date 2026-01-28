@@ -270,7 +270,7 @@ impl<ExtraCtx: Debug + Default> OpPayloadBuilderCtx<ExtraCtx> {
                     // when set. The state transition process ensures
                     // this is only set for post-Canyon deposit
                     // transactions.
-                    deposit_receipt_version: self.is_canyon_active().then_some(1),
+                    deposit_receipt_version: None,
                 })
             }
         }
