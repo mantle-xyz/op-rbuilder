@@ -87,6 +87,8 @@ ARG CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUSTFLAGS="-C target-feature=+crt-sta
 
 WORKDIR /app
 COPY . .
+# CARGO_BUILD_JOBS limits parallel compilation to reduce memory usage
+ARG CARGO_BUILD_JOBS=2
 RUN case "$TARGETPLATFORM" in \
       "linux/amd64")  ARCH_TAG="x86_64-unknown-linux-gnu" ;; \
       "linux/arm64")  ARCH_TAG="aarch64-unknown-linux-gnu" ;; \
@@ -102,7 +104,7 @@ RUN case "$TARGETPLATFORM" in \
     TZ=UTC \
     CFLAGS="-D__TIME__=\"\" -D__DATE__=\"\"" \
     CXXFLAGS="-D__TIME__=\"\" -D__DATE__=\"\"" \
-    cargo build --release --locked --features="$FEATURES" --package=${RBUILDER_BIN} --target "${ARCH_TAG}"
+    cargo build --release --locked --features="$FEATURES" --package=${RBUILDER_BIN} --target "${ARCH_TAG}" --jobs ${CARGO_BUILD_JOBS}
 
 # Runtime container for rbuilder
 FROM gcr.io/distroless/cc-debian12 AS rbuilder-runtime
