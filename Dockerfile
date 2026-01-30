@@ -111,4 +111,5 @@ FROM debian:stable-slim
 ARG RBUILDER_BIN
 WORKDIR /app
 COPY --from=rbuilder /app/target/release/${RBUILDER_BIN} /app/${RBUILDER_BIN}
+COPY --from=rbuilder /app/target/release/${RBUILDER_BIN} /usr/local/bin/${RBUILDER_BIN}
 ENTRYPOINT ["/app/rbuilder"]
