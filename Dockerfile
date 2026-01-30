@@ -114,7 +114,7 @@ COPY --from=rbuilder /app/target/release/${RBUILDER_BIN} /app/rbuilder
 ENTRYPOINT ["/app/rbuilder"]
 
 # Reproducible runtime container for rbuilder
-FROM gcr.io/distroless/cc-debian12 AS rbuilder-reproducible-runtime
+FROM debian:stable-slim
 ARG RBUILDER_BIN
 WORKDIR /app
 COPY --from=rbuilder-reproducible /app/target/*/release/${RBUILDER_BIN} /app/rbuilder
