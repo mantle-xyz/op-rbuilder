@@ -8,7 +8,8 @@ Branch: `feat/mantle-arsia-v0.2.14`
 
 - `cargo build --workspace` — passes
 - `cargo test --workspace --no-run` — passes
-- 93 / 112 op-rbuilder unit tests pass (83%)
+- 98 / 112 op-rbuilder unit tests pass (87%) — up from 93/112 (83%) after Mantle
+  business logic landed (commit 08dfb05). 5 flashblocks tests recovered.
 
 ## Dependency mapping
 
@@ -108,30 +109,94 @@ Possibly related to:
 Investigation: check if flashtestations contract address / interface changed
 between SDK commits.
 
-## Out of scope for this commit
+## Implemented (commit 08dfb05)
 
-The following Mantle-specific business logic adaptations were **not** added —
-they require test infrastructure validation that's blocked on the 19 failing
-tests. Recommended order:
+1. **`min_base_fee` tx filtering** ✓
+   - `OpPayloadBuilderCtx::execute_best_transactions` rejects txs with
+     `max_fee_per_gas < min_base_fee` when Jovian active.
+   - `flashblocks/payload_handler.rs` extra_data decoder now accepts both
+     9-byte Holocene and 17-byte Jovian layouts, populating
+     `OpPayloadBuilderAttributes.min_base_fee` for inbound flashblock replay.
 
-1. **`min_base_fee` tx filtering** — Jovian+ feature. Builder must skip
-   txs with `gas_price < min_base_fee`. Touch points:
-   - `crates/op-rbuilder/src/builders/flashblocks/best_txs.rs` (cursor filter)
-   - or `payload.rs::execute_best_transactions` (post-cursor check)
-   - `min_base_fee` is in `OpPayloadJobCtx.block_env_attributes.extra_data`
-     (last 8 bytes, big-endian)
+2. **Mantle-specific metrics** ✓ — 6 new Prometheus series:
+   - `op_rbuilder_mantle_min_base_fee_rejected_total` (counter)
+   - `op_rbuilder_mantle_skadi_active` / `_limb_active` / `_arsia_active` (gauges)
+   - `op_rbuilder_mantle_token_ratio` (gauge)
+   - `op_rbuilder_mantle_min_base_fee` (gauge)
 
-2. **Metrics for Mantle-specific events** — add counters for:
-   - `mantle_min_base_fee_rejected_total`
-   - `mantle_arsia_active` (gauge)
-   - `mantle_token_ratio_at_block_start` (deprecated post-Arsia; for migration window)
+3. **TokenRatio block-level logging** ✓
+   - `record_mantle_token_ratio[_standard]` reads `GAS_ORACLE_CONTRACT.TOKEN_RATIO_SLOT`
+     at parent state before every built payload, emits debug log + gauge.
 
-3. **TokenRatio sanity logging** — log `TokenRatio` from `GasOracleAddr` state
-   on every block for monitoring.
+## Still TODO
 
 4. **`eth_estimateTotalFee` / `eth_sendRawTransactionWithPreconf` confirmation**
    — these RPCs come from reth fork; verify op-rbuilder's `NodeAddOns` setup
-   exposes them via the addon's RPC ext.
+   exposes them via the addon's RPC ext. Not implemented in this branch
+   (op-rbuilder doesn't customize the addon's RPC ext beyond what reth provides).
+
+## Remaining test failures (14 / 112)
+
+After commit 08dfb05 the test failure count dropped 19 → 14. Breakdown:
+
+### Category B (gas-accounting): 4 tests
+
+```
+tests::smoke::chain_produces_big_tx_with_gas_limit_standard
+tests::smoke::chain_produces_big_tx_with_gas_limit_flashblocks
+tests::gas_limiter::gas_limiter_blocks_excessive_usage_standard
+tests::gas_limiter::gas_limiter_blocks_excessive_usage_flashblocks
+```
+
+Pattern: simple valid transfers (`random_valid_transfer`, ~21K gas) are NOT
+being included in produced blocks, even though under any reasonable
+`max_gas_per_txn` cap they should be. Suggests a deeper inclusion-path
+difference between paradigm reth v1.9.3 and mantle reth v1.9.3-mantle-arsia.1.
+
+Possible root causes (need investigation):
+- Mantle's `TokenRatio` multiplier active on default test chainspec (pre-Arsia)
+  inflates intrinsic gas requirement past test's funding amount.
+- Default chainspec may activate Jovian by default in test env, triggering
+  `min_base_fee=0` checks that interact oddly with test tx pricing.
+
+Suggested first investigation step: print `tx.max_fee_per_gas()`,
+`ctx.base_fee()`, `ctx.is_jovian_active()`, `ctx.attributes().min_base_fee`,
+and `chain_spec.is_mantle_chain()` at the head of `execute_best_transactions`
+for one of these tests.
+
+### Category A leftover: 1 test
+
+```
+tests::flashblocks::test_flashblocks_number_contract_builder_tx_flashblocks
+```
+
+Likely the same root cause as Cat B (builder marker tx interaction).
+
+### Category C (flashtestations / TEE): 10 tests
+
+```
+tests::flashtestations::test_flashtestations_*
+```
+
+All flashtestations tests still failing. Root cause likely lies in:
+- TDX SDK pin (`0c75c913a8`) being older than the version v0.2.14 originally
+  tested against, so attestation contract interface drift.
+- Or coupling to the same gas-accounting issue as Cat B (builder marker tx
+  containing attestation tx exceeds limits).
+
+These are deferred — TEE testing requires a dedicated runner with TDX
+hardware emulation, and the test framework's mocking may need updates for
+the SDK version drift.
+
+## Commit log (most recent first)
+
+```
+08dfb05 feat(mantle): min_base_fee tx filter + Jovian extra_data + Mantle metrics
+76d2bb1 docs: add MANTLE_MIGRATION.md — status, deps mapping, known test failures
+a78e361 test: add Mantle eth_value/eth_tx_value to TxDeposit test fixtures
+aff22d5 fix(tdx-quote-provider): pin tdx-attestation-sdk to pre-regression commit
+8b62235 feat: switch reth deps to mantle-xyz v1.9.3-mantle-arsia.1
+```
 
 ## Commit log
 
