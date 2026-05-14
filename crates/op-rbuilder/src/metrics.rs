@@ -89,6 +89,9 @@ pub struct OpRBuilderMetrics {
     pub invalid_built_blocks_count: Counter,
     /// Number of invalid synced blocks
     pub invalid_synced_blocks_count: Counter,
+    /// Number of transactions skipped at selection because they were priced below
+    /// the Mantle `min_base_fee` attribute (Jovian+).
+    pub skipped_min_base_fee_count: Counter,
     /// Histogram of fetching transactions from the pool duration
     pub transaction_pool_fetch_duration: Histogram,
     /// Latest time taken to fetch tx from the pool

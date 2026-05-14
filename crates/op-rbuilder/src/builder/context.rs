@@ -162,6 +162,15 @@ impl OpPayloadJobCtx {
         self.evm_factory.evm_env().block_env.basefee
     }
 
+    /// Returns the Mantle `min_base_fee` attribute if set on this payload.
+    ///
+    /// Available from Jovian onwards (Mantle extension). Transactions with
+    /// `gas_price < min_base_fee` MUST be rejected by the builder to match
+    /// the validation rule enforced by op-reth in [`op_revm::state_transition`].
+    pub fn min_base_fee(&self) -> Option<u64> {
+        self.attributes().min_base_fee
+    }
+
     /// Returns the current blob gas price.
     pub fn get_blob_gasprice(&self) -> Option<u64> {
         self.evm_factory
@@ -479,7 +488,36 @@ impl OpPayloadJobCtx {
             timestamp: self.attributes().timestamp(),
         };
 
+        // Mantle Jovian+: enforce `min_base_fee` attribute strictly. Transactions
+        // priced below this threshold would be rejected by op-reth state transition
+        // anyway, so we drop them at pool selection to avoid wasting EVM cycles.
+        let min_base_fee = self.min_base_fee();
+
         while let Some(tx) = best_txs.next(()) {
+            // min_base_fee filter (Mantle extension; see OpPayloadBuilderAttributes::min_base_fee).
+            // Deposit / system txs are exempt and bypass the gas price check on the L2 side.
+            if let Some(min_fee) = min_base_fee
+                && !tx.is_bundle()
+                && tx.transaction().max_fee_per_gas() < min_fee as u128
+            {
+                let sender = tx.sender();
+                let nonce = tx.nonce();
+                if self.enable_tx_tracking_debug_logs {
+                    debug!(
+                        target: "tx_trace",
+                        tx_hash = %tx.hash(),
+                        max_fee_per_gas = tx.transaction().max_fee_per_gas(),
+                        min_base_fee = min_fee,
+                        stage = "builder_skipped_min_base_fee"
+                    );
+                }
+                best_txs.mark_invalid(sender, nonce);
+                self.metrics
+                    .skipped_min_base_fee_count
+                    .increment(1);
+                continue;
+            }
+
             let conditional = tx.conditional().cloned();
             let tx_da_size = tx.estimated_da_size();
 
