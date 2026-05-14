@@ -55,83 +55,88 @@ redundant_clone = "warn"
 unused_async = "warn"
 
 [workspace.dependencies]
-# reth
-reth = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-basic-payload-builder = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-chain-state = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-chainspec = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-cli = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-cli-commands = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-cli-util = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-db = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-evm = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-execution-errors = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-execution-types = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-ipc = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-metrics = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-network-peers = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-node-api = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-node-builder = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-node-core = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-payload-builder = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-payload-primitives = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-payload-util = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-primitives = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-primitives-traits = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-provider = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3", features = ["test-utils"] }
-reth-revm = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-rpc-api = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-rpc-eth-types = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-rpc-layer = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-storage-api = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-tasks = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-testing-utils = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-tracing-otlp = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-transaction-pool = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-trie = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
-reth-trie-db = { git = "https://github.com/paradigmxyz/reth", tag = "v1.11.3" }
+# reth (Mantle Arsia fork)
+reth = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-basic-payload-builder = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-chain-state = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-chainspec = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-cli = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-cli-commands = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-cli-util = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-db = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-evm = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-execution-errors = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-execution-types = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-ipc = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-metrics = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-network-peers = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-node-api = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-node-builder = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-node-core = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-payload-builder = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-payload-primitives = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-payload-util = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-primitives = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-primitives-traits = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-provider = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1", features = ["test-utils"] }
+reth-revm = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-rpc-api = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-rpc-eth-types = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-rpc-layer = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-storage-api = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-tasks = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-testing-utils = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-tracing-otlp = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-transaction-pool = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-trie = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-trie-db = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
 
-# op-reth (moved to ethereum-optimism/optimism repo)
-reth-optimism-chainspec = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v1.11.3-rc.1", default-features = false }
-reth-optimism-cli = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v1.11.3-rc.1", default-features = false }
-reth-optimism-consensus = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v1.11.3-rc.1", default-features = false }
-reth-optimism-evm = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v1.11.3-rc.1", default-features = false }
-reth-optimism-forks = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v1.11.3-rc.1", default-features = false }
-reth-optimism-node = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v1.11.3-rc.1" }
-reth-optimism-payload-builder = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v1.11.3-rc.1" }
-reth-optimism-primitives = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v1.11.3-rc.1", default-features = false }
-reth-optimism-rpc = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v1.11.3-rc.1", features = ["client"] }
-reth-optimism-txpool = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v1.11.3-rc.1" }
+# op-reth (Mantle Arsia fork — integrated into mantle-xyz/reth, not separate repo)
+reth-optimism-chainspec = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1", default-features = false }
+reth-optimism-cli = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1", default-features = false }
+reth-optimism-consensus = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1", default-features = false }
+reth-optimism-evm = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1", default-features = false }
+reth-optimism-forks = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1", default-features = false }
+reth-optimism-node = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-optimism-payload-builder = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-optimism-primitives = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1", default-features = false }
+reth-optimism-rpc = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1", features = ["client"] }
+reth-optimism-txpool = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+# Mantle-specific hardforks crate (Skadi / Limb / Arsia)
+reth-mantle-forks = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1", default-features = false }
 
-# revm
-revm = { version = "34.0.0", features = ["std", "secp256k1", "optional_balance_check"], default-features = false }
-op-revm = { version = "15.0.0", default-features = false }
+# revm (Mantle Arsia fork)
+revm = { git = "https://github.com/mantle-xyz/revm", tag = "v2.2.2", features = ["std", "secp256k1", "optional_balance_check"], default-features = false }
+op-revm = { git = "https://github.com/mantle-xyz/revm", tag = "v2.2.2", default-features = false }
 
-# alloy
-alloy-consensus = { version = "1.4.3", features = ["kzg"] }
-alloy-contract = { version = "1.4.3" }
-alloy-eips = { version = "1.4.3" }
-alloy-evm = { version = "0.27.2", default-features = false }
-alloy-json-rpc = { version = "1.4.3" }
-alloy-network = { version = "1.4.3" }
-alloy-primitives = { version = "1.5.2", default-features = false, features = ["map-foldhash"] }
-alloy-provider = { version = "1.4.3", features = ["ipc", "pubsub", "txpool-api", "engine-api"] }
+# alloy — pinned to versions matching mantle-xyz/reth v1.9.3-mantle-arsia.1 Cargo.lock
+# (mantle-xyz/evm v2.2.1 is incompatible with alloy-rpc-types-eth >= 1.8.x due to BlockOverrides::beacon_root)
+alloy-consensus = { version = "=1.7.3", features = ["kzg"] }
+alloy-contract = { version = "=1.7.3" }
+alloy-eips = { version = "=1.7.3" }
+alloy-evm = { git = "https://github.com/mantle-xyz/evm", tag = "v2.2.1", default-features = false }
+alloy-json-rpc = { version = "=1.7.3" }
+alloy-network = { version = "=1.7.3" }
+alloy-primitives = { version = "=1.4.1", default-features = false, features = ["map-foldhash"] }
+alloy-provider = { version = "=1.7.3", features = ["ipc", "pubsub", "txpool-api", "engine-api"] }
 alloy-rlp = "0.3.10"
-alloy-rpc-types = { version = "1.4.3" }
-alloy-rpc-types-engine = { version = "1.4.3", features = ["ssz"] }
-alloy-rpc-types-eth = { version = "1.4.3" }
-alloy-serde = { version = "1.4.3" }
-alloy-signer-local = { version = "1.4.3" }
-alloy-sol-types = { version = "1.2.1", features = ["json"] }
-alloy-transport = { version = "1.4.3" }
+alloy-rpc-types = { version = "=1.7.3" }
+alloy-rpc-types-engine = { version = "=1.7.3", features = ["ssz"] }
+alloy-rpc-types-eth = { version = "=1.7.3" }
+alloy-serde = { version = "=1.7.3" }
+alloy-signer-local = { version = "=1.7.3" }
+alloy-sol-types = { version = "=1.4.1", features = ["json"] }
+alloy-transport = { version = "=1.7.3" }
 
-# op-alloy
-alloy-op-evm = { version = "0.26.3", default-features = false }
-op-alloy-consensus = { version = "0.23.1", default-features = false }
+# op-alloy (Mantle Arsia fork)
+alloy-op-evm = { git = "https://github.com/mantle-xyz/evm", tag = "v2.2.1", default-features = false }
+op-alloy-consensus = { git = "https://github.com/mantle-xyz/op-alloy", tag = "v2.2.0", default-features = false }
 op-alloy-flz = { version = "0.13.1", default-features = false }
-op-alloy-network = { version = "0.23.1", default-features = false }
-op-alloy-rpc-types = { version = "0.23.1", default-features = false }
-op-alloy-rpc-types-engine = { version = "0.23.1", default-features = false, features = ["serde"] }
+op-alloy-network = { git = "https://github.com/mantle-xyz/op-alloy", tag = "v2.2.0", default-features = false }
+op-alloy-rpc-types = { git = "https://github.com/mantle-xyz/op-alloy", tag = "v2.2.0", default-features = false }
+op-alloy-rpc-types-engine = { git = "https://github.com/mantle-xyz/op-alloy", tag = "v2.2.0", default-features = false, features = ["serde"] }
+# revm-inspectors (Mantle Arsia fork)
+revm-inspectors = { git = "https://github.com/mantle-xyz/revm-inspectors", tag = "v2.2.1", default-features = false }
 
 anyhow = "1.0"
 async-trait = { version = "0.1.83" }
@@ -194,21 +199,36 @@ quote = "1.0"
 syn = "2.0"
 testcontainers = "0.27.0"
 tikv-jemallocator = { version = "0.6" }
-vergen = "9.0.4"
-vergen-git2 = "9.0.4"
+vergen = "=9.0.4"
+vergen-git2 = "=1.0.5"
 opentelemetry = { version = "0.31", features = ["trace"] }
 tracing-loki = "0.2.6"
 
 # tdx attestation
 tdx = { git = "https://github.com/automata-network/tdx-attestation-sdk.git", features = ["configfs"], rev = "43bfd5a9" }
 
-# Unify op-alloy/alloy-op crates so crates.io transitive deps resolve to the same
-# git versions used by the ethereum-optimism/optimism repo.
+# Unify op-alloy/alloy-op/revm crates so crates.io transitive deps resolve to the same
+# Mantle Arsia fork versions used directly by the reth fork.
 [patch.crates-io]
-op-alloy-consensus = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v1.11.3-rc.1" }
-op-alloy-rpc-types = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v1.11.3-rc.1" }
-op-alloy-rpc-types-engine = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v1.11.3-rc.1" }
-op-alloy-rpc-jsonrpsee = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v1.11.3-rc.1" }
-op-alloy-network = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v1.11.3-rc.1" }
-alloy-op-evm = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v1.11.3-rc.1" }
+op-alloy-consensus = { git = "https://github.com/mantle-xyz/op-alloy", tag = "v2.2.0" }
+op-alloy-rpc-types = { git = "https://github.com/mantle-xyz/op-alloy", tag = "v2.2.0" }
+op-alloy-rpc-types-engine = { git = "https://github.com/mantle-xyz/op-alloy", tag = "v2.2.0" }
+op-alloy-rpc-jsonrpsee = { git = "https://github.com/mantle-xyz/op-alloy", tag = "v2.2.0" }
+op-alloy-network = { git = "https://github.com/mantle-xyz/op-alloy", tag = "v2.2.0" }
+
+alloy-evm = { git = "https://github.com/mantle-xyz/evm", tag = "v2.2.1" }
+alloy-op-evm = { git = "https://github.com/mantle-xyz/evm", tag = "v2.2.1" }
+
+revm = { git = "https://github.com/mantle-xyz/revm", tag = "v2.2.2" }
+revm-bytecode = { git = "https://github.com/mantle-xyz/revm", tag = "v2.2.2" }
+revm-state = { git = "https://github.com/mantle-xyz/revm", tag = "v2.2.2" }
+revm-primitives = { git = "https://github.com/mantle-xyz/revm", tag = "v2.2.2" }
+revm-interpreter = { git = "https://github.com/mantle-xyz/revm", tag = "v2.2.2" }
+revm-inspector = { git = "https://github.com/mantle-xyz/revm", tag = "v2.2.2" }
+revm-context = { git = "https://github.com/mantle-xyz/revm", tag = "v2.2.2" }
+revm-context-interface = { git = "https://github.com/mantle-xyz/revm", tag = "v2.2.2" }
+revm-database = { git = "https://github.com/mantle-xyz/revm", tag = "v2.2.2" }
+revm-database-interface = { git = "https://github.com/mantle-xyz/revm", tag = "v2.2.2" }
+op-revm = { git = "https://github.com/mantle-xyz/revm", tag = "v2.2.2" }
+revm-inspectors = { git = "https://github.com/mantle-xyz/revm-inspectors", tag = "v2.2.1" }
 alloy-op-hardforks = { git = "https://github.com/ethereum-optimism/optimism", tag = "op-reth/v1.11.3-rc.1" }

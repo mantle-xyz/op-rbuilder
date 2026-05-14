@@ -35,7 +35,7 @@ use parking_lot::Mutex;
 use reth::{
     args::{DatadirArgs, NetworkArgs, RpcServerArgs},
     core::exit::NodeExitFuture,
-    tasks::Runtime as TaskRuntime,
+    tasks::TaskExecutor as TaskRuntime,
 };
 use reth_node_builder::{NodeBuilder, NodeConfig};
 use reth_optimism_chainspec::OpChainSpec;
@@ -189,7 +189,7 @@ impl LocalInstance {
                     let metrics = Arc::new(OpRBuilderMetrics::default());
                     let chain_events = ctx.provider.canonical_state_stream();
                     let evm_config = OpEvmConfig::optimism(ctx.provider.chain_spec());
-                    ctx.task_executor.spawn_task(
+                    ctx.task_executor.spawn(
                         maintain_tip_state(
                             simulator.clone(),
                             ctx.provider.clone(),
@@ -202,7 +202,7 @@ impl LocalInstance {
                     );
 
                     let pending_events = ctx.pool.all_transactions_event_listener();
-                    ctx.task_executor.spawn_task(
+                    ctx.task_executor.spawn(
                         maintain_pending_simulations(
                             simulator,
                             ctx.pool.clone(),
@@ -366,8 +366,8 @@ pub fn default_node_config() -> NodeConfig<OpChainSpec> {
             .parse()
             .expect("Failed to parse data dir path"),
         static_files_path: None,
-        rocksdb_path: None,
-        pprof_dumps_path: None,
+        // rocksdb_path / pprof_dumps_path were added to DatadirArgs after reth v1.9.x;
+        // they are omitted here for compatibility with mantle-arsia.
     };
 
     NodeConfig::<OpChainSpec>::new(chain_spec())
@@ -388,7 +388,14 @@ fn chain_spec() -> Arc<OpChainSpec> {
 }
 
 fn task_runtime() -> TaskRuntime {
-    TaskRuntime::test()
+    // In reth v1.9, the test factory `Runtime::test()` no longer exists; build a fresh
+    // `TaskExecutor` from a `TaskManager` rooted at the current tokio runtime. The
+    // manager is leaked because it must outlive every spawned task; the test process
+    // exits shortly after.
+    let manager = reth_tasks::TaskManager::current();
+    let executor = manager.executor();
+    Box::leak(Box::new(manager));
+    executor
 }
 
 fn pool_component(args: &OpRbuilderArgs) -> OpPoolBuilder<FBPooledTransaction> {

@@ -142,6 +142,9 @@ impl<RpcProtocol: Protocol> ChainDriver<RpcProtocol> {
                 gas_limit: 210000,
                 is_system_transaction: false,
                 input: JOVIAN_DATA.into(),
+                // Mantle-specific BVM_ETH fields (see TxDeposit in mantle-xyz/op-alloy)
+                eth_value: 0,
+                eth_tx_value: None,
             };
 
             // Create a temporary signer for the deposit

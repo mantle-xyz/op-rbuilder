@@ -279,8 +279,10 @@ pub trait BuilderTransactions {
             info.cumulative_da_bytes_used += builder_tx.da_size;
             info.cumulative_uncompressed_bytes += tx_uncompressed_size;
 
+            let signed_inner = builder_tx.signed_tx.inner().clone();
+            let envelope: op_alloy_consensus::OpTxEnvelope = signed_inner.into();
             let ctx = ReceiptBuilderCtx {
-                tx_type: builder_tx.signed_tx.inner().tx_type(),
+                tx: &envelope,
                 evm: &evm,
                 result,
                 state: &state,
@@ -362,7 +364,9 @@ pub trait BuilderTransactions {
         evm: &mut OpEvm<impl Database, NoOpInspector, PrecompilesMap>,
     ) -> Result<SimulationSuccessResult<T>, BuilderTransactionError> {
         let evm_env = alloy_evm::EvmEnv::from((evm.cfg.clone(), evm.block.clone()));
-        let tx_env = tx.try_into_tx_env(&evm_env)?;
+        let tx_env = tx
+            .try_into_tx_env(&evm_env)
+            .map_err(|e| BuilderTransactionError::Other(format!("tx_env conversion: {e}").into()))?;
         let to = tx_env.base.kind.into_to().unwrap_or_default();
 
         let ResultAndState { result, state } = match evm.transact(tx_env) {

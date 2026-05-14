@@ -211,11 +211,14 @@ impl<P: Protocol> ChainDriverExt for ChainDriver<P> {
                 source_hash: B256::default(),
                 from: address, // Set the sender to the address of the account to seed
                 to: TxKind::Create,
-                mint: amount, // Amount to deposit
+                mint: amount, // Amount of MNT to mint on L2
                 value: U256::default(),
                 gas_limit: 210000,
                 is_system_transaction: false,
                 input: Default::default(), // No input data for the deposit
+                // Mantle-specific BVM_ETH fields; tests deal in MNT only
+                eth_value: 0,
+                eth_tx_value: None,
             };
 
             let signer = Signer::random();
@@ -232,11 +235,14 @@ impl<P: Protocol> ChainDriverExt for ChainDriver<P> {
             source_hash: B256::default(),
             from: address, // Set the sender to the address of the account to seed
             to: TxKind::Create,
-            mint: amount, // Amount to deposit
+            mint: amount, // Amount of MNT to mint on L2
             value: U256::default(),
             gas_limit: 210000,
             is_system_transaction: false,
             input: Default::default(), // No input data for the deposit
+            // Mantle-specific BVM_ETH fields; tests deal in MNT only
+            eth_value: 0,
+            eth_tx_value: None,
         };
 
         let signer = Signer::random();

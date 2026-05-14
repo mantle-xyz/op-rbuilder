@@ -4,7 +4,7 @@ use alloy_evm::Database;
 use alloy_op_evm::block::receipt_builder::OpReceiptBuilder;
 use alloy_primitives::{B256, BlockHash, Bytes, U256};
 use alloy_rpc_types_eth::Withdrawals;
-use op_alloy_consensus::{OpDepositReceipt, OpTxType};
+use op_alloy_consensus::{OpDepositReceipt};
 use op_revm::L1BlockInfo;
 use reth_basic_payload_builder::PayloadConfig;
 use reth_chainspec::{EthChainSpec, EthereumHardforks};
@@ -274,7 +274,7 @@ impl OpPayloadJobCtx {
     /// Constructs a receipt for the given transaction.
     pub fn build_receipt<E: Evm>(
         &self,
-        ctx: ReceiptBuilderCtx<'_, OpTxType, E>,
+        ctx: ReceiptBuilderCtx<'_, op_alloy_consensus::OpTxEnvelope, E>,
         deposit_nonce: Option<u64>,
     ) -> OpReceipt {
         let receipt_builder = self
@@ -381,8 +381,9 @@ impl OpPayloadJobCtx {
             }
             info.cumulative_uncompressed_bytes += sequencer_tx.encode_2718_len() as u64;
 
+            let sequencer_envelope: op_alloy_consensus::OpTxEnvelope = (*sequencer_tx).clone().into();
             let ctx = ReceiptBuilderCtx {
-                tx_type: sequencer_tx.tx_type(),
+                tx: &sequencer_envelope,
                 evm: &evm,
                 result,
                 state: &state,
@@ -675,7 +676,7 @@ impl OpPayloadJobCtx {
 
             // Push transaction changeset and calculate header bloom filter for receipt.
             let ctx = ReceiptBuilderCtx {
-                tx_type: tx.tx_type(),
+                tx: tx.inner(),
                 evm: &evm,
                 result,
                 state: &state,
@@ -929,7 +930,7 @@ impl OpPayloadJobCtx {
                     info.cumulative_uncompressed_bytes += br_tx_uncompressed_size;
 
                     let br_ctx = ReceiptBuilderCtx {
-                        tx_type: bundle.backrun_tx.tx_type(),
+                        tx: bundle.backrun_tx.inner(),
                         evm: &evm,
                         result: br_result,
                         state: &br_state,

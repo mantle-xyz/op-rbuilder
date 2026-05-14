@@ -65,7 +65,7 @@ reth-optimism-txpool.workspace = true
 alloy-consensus.workspace = true
 alloy-contract.workspace = true
 alloy-eips.workspace = true
-alloy-evm.workspace = true
+alloy-evm = { workspace = true, features = ["rpc", "overrides"] }
 alloy-json-rpc.workspace = true
 alloy-network.workspace = true
 alloy-primitives.workspace = true

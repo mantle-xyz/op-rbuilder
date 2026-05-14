@@ -7,7 +7,7 @@ use crate::{
 use alloy_evm::eth::receipt_builder::ReceiptBuilderCtx;
 use alloy_primitives::B64;
 use eyre::{WrapErr as _, bail};
-use op_alloy_consensus::OpTxType;
+
 use op_alloy_rpc_types_engine::OpFlashblockPayload;
 use op_revm::L1BlockInfo;
 use reth::revm::{State, database::StateProviderDatabase};
@@ -22,7 +22,7 @@ use reth_optimism_payload_builder::OpBuiltPayload;
 use reth_optimism_primitives::OpReceipt;
 use reth_payload_builder::EthPayloadBuilderAttributes;
 use reth_primitives_traits::SealedHeader;
-use reth_tasks::Runtime;
+use reth_tasks::TaskExecutor;
 use std::sync::Arc;
 use tokio::sync::mpsc;
 use tracing::{error, info, trace, warn};
@@ -47,7 +47,7 @@ pub(crate) struct PayloadHandler<Client> {
     // chain client
     client: Client,
     // task executor
-    task_executor: Runtime,
+    task_executor: TaskExecutor,
     cancel: tokio_util::sync::CancellationToken,
 }
 
@@ -64,7 +64,7 @@ where
         payload_events_handle: tokio::sync::broadcast::Sender<Events<OpEngineTypes>>,
         ctx: OpPayloadSyncerCtx,
         client: Client,
-        task_executor: Runtime,
+        task_executor: TaskExecutor,
         cancel: tokio_util::sync::CancellationToken,
     ) -> Self {
         Self {
@@ -122,7 +122,7 @@ where
 
                             // execute the flashblock on a thread where blocking is acceptable,
                             // as it's potentially a heavy operation
-                            task_executor.spawn_blocking_task(Box::pin(async move {
+                            task_executor.spawn_blocking(Box::pin(async move {
                                 let res = execute_flashblock(
                                     payload,
                                     ctx,
@@ -435,7 +435,7 @@ fn execute_transactions(
         }
 
         let receipt_ctx = ReceiptBuilderCtx {
-            tx_type: tx.tx_type(),
+            tx: &tx,
             evm: &evm,
             result,
             state: &state,
@@ -472,7 +472,7 @@ fn execute_transactions(
 fn build_receipt<E: alloy_evm::Evm>(
     ctx: &OpPayloadSyncerCtx,
     evm_factory: &OpBlockEvmFactory,
-    receipt_ctx: ReceiptBuilderCtx<'_, OpTxType, E>,
+    receipt_ctx: ReceiptBuilderCtx<'_, op_alloy_consensus::OpTxEnvelope, E>,
     deposit_nonce: Option<u64>,
     timestamp: u64,
 ) -> OpReceipt {

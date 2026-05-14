@@ -30,7 +30,8 @@ use op_alloy_rpc_types_engine::{
 use reth_chainspec::EthChainSpec;
 use reth_evm::{ConfigureEvm, execute::BlockBuilder};
 use reth_execution_types::BlockExecutionOutput;
-use reth_node_api::{Block, BuiltPayloadExecutedBlock, PayloadBuilderError};
+use reth_chain_state::ExecutedBlock as BuiltPayloadExecutedBlock;
+use reth_node_api::{Block, PayloadBuilderError};
 use reth_optimism_consensus::{calculate_receipt_root_no_memo_optimism, isthmus};
 use reth_optimism_evm::{OpEvmConfig, OpNextBlockEnvAttributes};
 use reth_optimism_forks::OpHardforks;
@@ -48,7 +49,7 @@ use reth_revm::{
     database::StateProviderDatabase,
     db::{CacheState, TransitionState, states::bundle_state::BundleRetention},
 };
-use reth_tasks::Runtime;
+use reth_tasks::TaskExecutor;
 use reth_transaction_pool::TransactionPool;
 use reth_trie::{HashedPostState, updates::TrieUpdates};
 use revm::Database;
@@ -298,7 +299,7 @@ pub(super) struct OpPayloadBuilderInner<Pool, Client, BuilderTx> {
     /// Tokio task metrics for monitoring spawned tasks
     task_metrics: Arc<FlashblocksTaskMetrics>,
     /// Task executor used to offload blocking work.
-    executor: Runtime,
+    executor: TaskExecutor,
 }
 
 impl<Pool, Client, BuilderTx> Deref for OpPayloadBuilder<Pool, Client, BuilderTx> {
@@ -333,7 +334,7 @@ where
         ws_pub: WebSocketPublisher,
         metrics: Arc<OpRBuilderMetrics>,
         task_metrics: Arc<FlashblocksTaskMetrics>,
-        executor: Runtime,
+        executor: TaskExecutor,
     ) -> Self {
         let address_gas_limiter = AddressGasLimiter::new(config.gas_limiter_config.clone());
         let builder_ctx = Arc::new(OpPayloadBuilderCtx {
@@ -1490,13 +1491,21 @@ where
         RecoveredBlock::new_unhashed(block.clone(), info.executed_senders.clone());
     // create the executed block data
 
+    // Convert single-block BlockExecutionOutput into ExecutionOutcome (which is the wrapper
+    // used by reth v1.9's ExecutedBlock; outer Vec/Vec wrapping for receipts/requests).
+    let block_number = recovered_block.header().number;
+    let execution_outcome = reth_execution_types::ExecutionOutcome {
+        bundle: execution_output.state,
+        receipts: vec![execution_output.result.receipts],
+        first_block: block_number,
+        requests: vec![execution_output.result.requests],
+    };
+
     let executed = BuiltPayloadExecutedBlock {
         recovered_block: Arc::new(recovered_block),
-        execution_output: Arc::new(execution_output),
-        trie_updates: either::Either::Left(
-            trie_updates_to_cache.unwrap_or_else(|| Arc::new(TrieUpdates::default())),
-        ),
-        hashed_state: either::Either::Left(Arc::new(hashed_state)),
+        execution_output: Arc::new(execution_outcome),
+        trie_updates: trie_updates_to_cache.unwrap_or_else(|| Arc::new(TrieUpdates::default())),
+        hashed_state: Arc::new(hashed_state),
     };
 
     let seal_start = Instant::now();

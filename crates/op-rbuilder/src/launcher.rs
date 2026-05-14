@@ -85,7 +85,7 @@ struct BuilderLauncher;
 impl Launcher<OpChainSpecParser, OpRbuilderArgs> for BuilderLauncher {
     async fn entrypoint(
         self,
-        builder: WithLaunchContext<NodeBuilder<DatabaseEnv, OpChainSpec>>,
+        builder: WithLaunchContext<NodeBuilder<Arc<DatabaseEnv>, OpChainSpec>>,
         builder_args: OpRbuilderArgs,
     ) -> Result<()> {
         let builder_config = BuilderConfig::try_from(builder_args.clone())
@@ -183,14 +183,14 @@ impl Launcher<OpChainSpecParser, OpRbuilderArgs> for BuilderLauncher {
                         reverted_cache_copy,
                         builder_args.enable_tx_tracking_debug_logs,
                     );
-                    ctx.task_executor.spawn_critical_task("txlogging", task);
+                    ctx.task_executor.spawn_critical("txlogging", task);
                 }
 
                 if backrun_bundle_enabled {
                     let chain_events = ctx.provider.canonical_state_stream();
                     let task_executor = ctx.task_executor.clone();
                     ctx.task_executor
-                        .spawn_task(maintain_backrun_bundle_pool_future(
+                        .spawn(maintain_backrun_bundle_pool_future(
                             backrun_bundle_pool_maintain,
                             chain_events,
                             task_executor,
@@ -201,7 +201,7 @@ impl Launcher<OpChainSpecParser, OpRbuilderArgs> for BuilderLauncher {
                     let metrics = Arc::new(OpRBuilderMetrics::default());
                     let chain_events = ctx.provider.canonical_state_stream();
                     let evm_config = OpEvmConfig::optimism(ctx.provider.chain_spec());
-                    ctx.task_executor.spawn_task(
+                    ctx.task_executor.spawn(
                         maintain_tip_state(
                             simulator.clone(),
                             ctx.provider.clone(),
@@ -214,7 +214,7 @@ impl Launcher<OpChainSpecParser, OpRbuilderArgs> for BuilderLauncher {
                     );
 
                     let pending_events = ctx.pool.all_transactions_event_listener();
-                    ctx.task_executor.spawn_task(
+                    ctx.task_executor.spawn(
                         maintain_pending_simulations(
                             simulator,
                             ctx.pool.clone(),

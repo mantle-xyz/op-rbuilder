@@ -10,7 +10,7 @@ use reth_payload_primitives::{BuiltPayload, PayloadBuilderAttributes};
 use reth_primitives_traits::HeaderTy;
 use reth_provider::CanonStateNotification;
 use reth_revm::cached::CachedReads;
-use reth_tasks::Runtime;
+use reth_tasks::TaskExecutor;
 use std::{
     pin::Pin,
     sync::{Arc, Mutex},
@@ -60,7 +60,7 @@ pub(super) struct BlockPayloadJobGenerator<Client, Builder> {
     /// The client that can interact with the chain.
     client: Client,
     /// How to spawn building tasks
-    executor: Runtime,
+    executor: TaskExecutor,
     /// The type responsible for building payloads.
     /// See [PayloadBuilder]
     builder: Builder,
@@ -81,7 +81,7 @@ impl<Client, Builder> BlockPayloadJobGenerator<Client, Builder> {
     /// Creates a new [BlockPayloadJobGenerator] with a custom [PayloadBuilder].
     pub(super) fn with_builder(
         client: Client,
-        executor: Runtime,
+        executor: TaskExecutor,
         builder: Builder,
         extra_block_deadline: Duration,
         block_time: Duration,
@@ -229,7 +229,7 @@ where
     /// The configuration for how the payload will be created.
     config: PayloadConfig<Builder::Attributes, HeaderForPayload<Builder::BuiltPayload>>,
     /// How to spawn building tasks
-    executor: Runtime,
+    executor: TaskExecutor,
     /// The type responsible for building payloads.
     ///
     /// See [PayloadBuilder]
@@ -296,7 +296,7 @@ where
         let cached_reads = std::mem::take(&mut self.cached_reads);
         // try_build is not in a blocking task!
         // We have to make sure any blocking work is handled individually within payload builder
-        self.executor.spawn_task(Box::pin(async move {
+        self.executor.spawn(Box::pin(async move {
             let args = BuildArguments {
                 cached_reads,
                 config: payload_config,
