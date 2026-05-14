@@ -141,7 +141,9 @@ impl<RpcProtocol: Protocol> ChainDriver<RpcProtocol> {
                 value: U256::default(),
                 gas_limit: 210000,
                 is_system_transaction: false,
+                eth_value: 0,
                 input: JOVIAN_DATA.into(),
+                eth_tx_value: None,
             };
 
             // Create a temporary signer for the deposit
