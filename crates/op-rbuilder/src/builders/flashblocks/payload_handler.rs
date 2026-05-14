@@ -304,6 +304,8 @@ fn execute_transactions(
                     mint: Some(tx.mint),
                     source_hash: tx.source_hash,
                     is_system_transaction: tx.is_system_transaction,
+                    eth_value: Some(tx.eth_value),
+                    eth_tx_value: tx.eth_tx_value,
                 };
                 OpTransaction {
                     base: tx_env,
