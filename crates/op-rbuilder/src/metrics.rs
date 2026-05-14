@@ -161,6 +161,20 @@ pub struct OpRBuilderMetrics {
     pub bundles_reverted: Histogram,
     /// Histogram of eth_sendBundle request duration
     pub bundle_receive_duration: Histogram,
+
+    // ─── Mantle-specific metrics ──────────────────────────────────────────────
+    /// Number of txs rejected because `gas_price < min_base_fee` (Jovian+).
+    pub mantle_min_base_fee_rejected_total: Counter,
+    /// 1 if Mantle Skadi is active for the most recent built payload, else 0.
+    pub mantle_skadi_active: Gauge,
+    /// 1 if Mantle Limb is active for the most recent built payload, else 0.
+    pub mantle_limb_active: Gauge,
+    /// 1 if Mantle Arsia is active for the most recent built payload, else 0.
+    pub mantle_arsia_active: Gauge,
+    /// Last observed value of `GasOracle.TokenRatioSlot` at block start.
+    pub mantle_token_ratio: Gauge,
+    /// Last value of `min_base_fee` (in wei) extracted from FCU attributes.
+    pub mantle_min_base_fee: Gauge,
 }
 
 impl OpRBuilderMetrics {

@@ -22,6 +22,8 @@ pub enum TxnExecutionResult {
     Reverted,
     RevertedAndExcluded,
     MaxGasUsageExceeded,
+    /// Mantle Jovian+: tx's `max_fee_per_gas` is below the per-block `min_base_fee`.
+    InsufficientFee,
 }
 
 #[derive(Default, Debug)]

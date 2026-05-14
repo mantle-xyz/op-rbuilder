@@ -17,6 +17,7 @@ use reth_evm::{
 use reth_node_api::PayloadBuilderError;
 use reth_optimism_chainspec::OpChainSpec;
 use reth_optimism_evm::{OpEvmConfig, OpNextBlockEnvAttributes};
+use reth_mantle_forks::MantleHardforks;
 use reth_optimism_forks::OpHardforks;
 use reth_optimism_node::OpPayloadBuilderAttributes;
 use reth_optimism_payload_builder::{
@@ -235,6 +236,41 @@ impl<ExtraCtx: Debug + Default> OpPayloadBuilderCtx<ExtraCtx> {
     pub fn is_jovian_active(&self) -> bool {
         self.chain_spec
             .is_jovian_active_at_timestamp(self.attributes().timestamp())
+    }
+
+    /// Returns true if Mantle Skadi is active for the payload.
+    pub fn is_mantle_skadi_active(&self) -> bool {
+        self.chain_spec
+            .is_skadi_active_at_timestamp(self.attributes().timestamp())
+    }
+
+    /// Returns true if Mantle Limb is active for the payload.
+    pub fn is_mantle_limb_active(&self) -> bool {
+        self.chain_spec
+            .is_limb_active_at_timestamp(self.attributes().timestamp())
+    }
+
+    /// Returns true if Mantle Arsia is active for the payload.
+    pub fn is_mantle_arsia_active(&self) -> bool {
+        self.chain_spec
+            .is_arsia_active_at_timestamp(self.attributes().timestamp())
+    }
+
+    /// Records Mantle-specific gauges (hardfork activation, min_base_fee).
+    /// Call once per built payload before tx execution starts.
+    pub fn record_mantle_state_gauges(&self) {
+        self.metrics
+            .mantle_skadi_active
+            .set(self.is_mantle_skadi_active() as u8 as f64);
+        self.metrics
+            .mantle_limb_active
+            .set(self.is_mantle_limb_active() as u8 as f64);
+        self.metrics
+            .mantle_arsia_active
+            .set(self.is_mantle_arsia_active() as u8 as f64);
+        if let Some(mbf) = self.attributes().min_base_fee {
+            self.metrics.mantle_min_base_fee.set(mbf as f64);
+        }
     }
 
     /// Returns the chain id
@@ -484,6 +520,20 @@ impl<ExtraCtx: Debug + Default> OpPayloadBuilderCtx<ExtraCtx> {
             // A sequencer's block should never contain blob or deposit transactions from the pool.
             if tx.is_eip4844() || tx.is_deposit() {
                 log_txn(TxnExecutionResult::SequencerTransaction);
+                best_txs.mark_invalid(tx.signer(), tx.nonce());
+                continue;
+            }
+
+            // Mantle Jovian+: reject txs that don't meet the per-block `min_base_fee` floor.
+            // The floor is signed by the sequencer in the FCU attributes; builder enforces it
+            // before EVM execution to avoid wasted work and to keep block contents aligned
+            // with what op-reth will accept downstream.
+            if self.is_jovian_active()
+                && let Some(min_base_fee) = self.attributes().min_base_fee
+                && tx.max_fee_per_gas() < min_base_fee as u128
+            {
+                self.metrics.mantle_min_base_fee_rejected_total.increment(1);
+                log_txn(TxnExecutionResult::InsufficientFee);
                 best_txs.mark_invalid(tx.signer(), tx.nonce());
                 continue;
             }

@@ -192,17 +192,32 @@ where
     let mut info = ExecutionInfo::with_capacity(payload.block().body().transactions.len());
 
     let extra_data = payload.block().sealed_header().extra_data.clone();
-    if extra_data.len() != 9 {
-        tracing::error!(len = extra_data.len(), data = ?extra_data, "invalid extra data length in flashblock");
-        bail!("extra data length should be 9 bytes");
-    }
 
-    // see https://specs.optimism.io/protocol/holocene/exec-engine.html#eip-1559-parameters-in-block-header
-    let eip_1559_parameters: B64 = extra_data[1..9].try_into().unwrap();
+    // Decode `extra_data` per Optimism Holocene + Mantle Jovian specs:
+    // - Holocene (9 bytes): [version=0x00, eip_1559_params(8)]
+    //   https://specs.optimism.io/protocol/holocene/exec-engine.html#eip-1559-parameters-in-block-header
+    // - Jovian / Mantle (17 bytes): Holocene layout + [min_base_fee(8 BE bytes)]
+    let (eip_1559_parameters, min_base_fee): (B64, Option<u64>) = match extra_data.len() {
+        9 => (extra_data[1..9].try_into().unwrap(), None),
+        17 => {
+            let params: B64 = extra_data[1..9].try_into().unwrap();
+            let mbf_bytes: [u8; 8] = extra_data[9..17].try_into().unwrap();
+            (params, Some(u64::from_be_bytes(mbf_bytes)))
+        }
+        _ => {
+            tracing::error!(
+                len = extra_data.len(),
+                data = ?extra_data,
+                "invalid extra data length in flashblock (expected 9 for Holocene or 17 for Jovian)"
+            );
+            bail!("extra data length should be 9 or 17 bytes");
+        }
+    };
     let payload_config = PayloadConfig::new(
         Arc::new(SealedHeader::new(parent_header.clone(), parent_hash)),
         OpPayloadBuilderAttributes {
             eip_1559_params: Some(eip_1559_parameters),
+            min_base_fee,
             payload_attributes: EthPayloadBuilderAttributes {
                 id: payload.id(),    // unused
                 parent: parent_hash, // unused

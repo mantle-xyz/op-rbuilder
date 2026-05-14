@@ -370,6 +370,12 @@ where
         let db = StateProviderDatabase::new(&state_provider);
         self.address_gas_limiter.refresh(ctx.block_number());
 
+        // Mantle: record hardfork activation gauges and min_base_fee for observability.
+        // Also probe TokenRatio storage slot from the parent state — useful during the
+        // Arsia transition window where token_ratio is still relevant pre-fork.
+        ctx.record_mantle_state_gauges();
+        record_mantle_token_ratio(&state_provider, &ctx);
+
         // 1. execute the pre steps and seal an early block with that
         let sequencer_tx_start_time = Instant::now();
         let mut state = State::builder()
@@ -1169,6 +1175,43 @@ where
         best_payload: BlockCell<Self::BuiltPayload>,
     ) -> Result<(), PayloadBuilderError> {
         self.build_payload(args, best_payload).await
+    }
+}
+
+/// Mantle: read the TokenRatio from the GasOracle precompile contract at the parent state,
+/// emit a gauge metric and a structured log line. Best-effort — any error is logged at
+/// debug level but does not affect block building. Useful for the Arsia migration window
+/// to confirm tokenRatio drift and for SRE dashboards.
+fn record_mantle_token_ratio<P, ExtraCtx>(state: &P, ctx: &OpPayloadBuilderCtx<ExtraCtx>)
+where
+    P: reth::providers::StateProvider,
+    ExtraCtx: std::fmt::Debug + Default,
+{
+    use op_revm::constants::{GAS_ORACLE_CONTRACT, TOKEN_RATIO_SLOT};
+
+    match state.storage(GAS_ORACLE_CONTRACT, TOKEN_RATIO_SLOT.into()) {
+        Ok(Some(value)) => {
+            // Storage values are U256; tokenRatio is stored as u128-range integer.
+            let ratio_u128 = value.saturating_to::<u128>();
+            ctx.metrics.mantle_token_ratio.set(ratio_u128 as f64);
+            tracing::debug!(
+                target: "payload_builder",
+                block_number = ctx.block_number(),
+                token_ratio = ratio_u128,
+                "mantle: token_ratio at parent state"
+            );
+        }
+        Ok(None) => {
+            // Slot unset (e.g. fresh chain / contract not deployed in this test env).
+            ctx.metrics.mantle_token_ratio.set(0.0);
+        }
+        Err(e) => {
+            tracing::debug!(
+                target: "payload_builder",
+                error = %e,
+                "mantle: failed to read TokenRatio storage slot"
+            );
+        }
     }
 }
 

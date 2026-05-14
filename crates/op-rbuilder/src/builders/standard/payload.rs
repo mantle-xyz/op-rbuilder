@@ -339,6 +339,11 @@ impl<Txs: PayloadTxsBounds> OpBuilder<'_, Txs> {
         let Self { best } = self;
         info!(target: "payload_builder", id=%ctx.payload_id(), parent_header = ?ctx.parent().hash(), parent_number = ctx.parent().number, "building new payload");
 
+        // Mantle: record hardfork activation + min_base_fee gauges; probe TokenRatio at
+        // parent state. See `record_mantle_token_ratio` in flashblocks/payload.rs for rationale.
+        ctx.record_mantle_state_gauges();
+        record_mantle_token_ratio_standard(&state_provider, ctx);
+
         // 1. apply pre-execution changes
         ctx.evm_config
             .builder_for_next_block(db, ctx.parent(), ctx.block_env_attributes.clone())
@@ -621,5 +626,36 @@ impl<Txs: PayloadTxsBounds> OpBuilder<'_, Txs> {
         } else {
             Ok(BuildOutcomeKind::Better { payload })
         }
+    }
+}
+
+/// Mantle: read TokenRatio from GasOracle precompile at the parent state, emit gauge.
+/// Best-effort; errors are logged at debug level.
+fn record_mantle_token_ratio_standard<P, ExtraCtx>(
+    state: &P,
+    ctx: &OpPayloadBuilderCtx<ExtraCtx>,
+) where
+    P: reth::providers::StateProvider,
+    ExtraCtx: std::fmt::Debug + Default,
+{
+    use op_revm::constants::{GAS_ORACLE_CONTRACT, TOKEN_RATIO_SLOT};
+
+    match state.storage(GAS_ORACLE_CONTRACT, TOKEN_RATIO_SLOT.into()) {
+        Ok(Some(value)) => {
+            let ratio_u128 = value.saturating_to::<u128>();
+            ctx.metrics.mantle_token_ratio.set(ratio_u128 as f64);
+            tracing::debug!(
+                target: "payload_builder",
+                block_number = ctx.block_number(),
+                token_ratio = ratio_u128,
+                "mantle: token_ratio at parent state"
+            );
+        }
+        Ok(None) => ctx.metrics.mantle_token_ratio.set(0.0),
+        Err(e) => tracing::debug!(
+            target: "payload_builder",
+            error = %e,
+            "mantle: failed to read TokenRatio storage slot"
+        ),
     }
 }

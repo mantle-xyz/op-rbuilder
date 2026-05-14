@@ -469,6 +469,7 @@ dependencies = [
  "alloy-hardforks",
  "alloy-primitives 1.4.1",
  "auto_impl",
+ "serde",
 ]
 
 [[package]]
@@ -6943,6 +6944,7 @@ dependencies = [
  "reth-execution-types",
  "reth-exex",
  "reth-ipc",
+ "reth-mantle-forks",
  "reth-metrics",
  "reth-network-peers",
  "reth-node-api",
@@ -9393,6 +9395,8 @@ dependencies = [
  "op-revm",
  "reth-optimism-forks",
  "reth-primitives-traits",
+ "reth-trie",
+ "reth-trie-db",
  "revm",
  "serde",
  "tracing",

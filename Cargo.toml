@@ -97,6 +97,7 @@ reth-optimism-primitives = { git = "https://github.com/mantle-xyz/reth", tag = "
 reth-optimism-consensus = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
 reth-optimism-cli = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
 reth-optimism-forks = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
+reth-mantle-forks = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
 reth-optimism-evm = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
 reth-optimism-node = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
 reth-optimism-payload-builder = { git = "https://github.com/mantle-xyz/reth", tag = "v1.9.3-mantle-arsia.1" }
