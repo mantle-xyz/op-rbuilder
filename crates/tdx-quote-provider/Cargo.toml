@@ -27,7 +27,7 @@ metrics-exporter-prometheus = { version = "0.17.0", features = [
     "http-listener",
 ] }
 tracing-subscriber = { version = "0.3.11", features = ["env-filter", "json"] }
-tdx = { git = "https://github.com/automata-network/tdx-attestation-sdk.git", features = ["configfs"], branch = "main"}
+tdx = { git = "https://github.com/automata-network/tdx-attestation-sdk.git", features = ["configfs"], rev = "0c75c913a8" }
 
 [dev-dependencies]
 reqwest.workspace = true
